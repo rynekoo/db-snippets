@@ -1,0 +1,12 @@
+{
+  "id": "ce81dec1-057f-4d95-a8a2-237c57067952",
+  "slug": "monica.js",
+  "title": "monica.js",
+  "description": "idk",
+  "language": "javascript",
+  "code": "const axios = require('axios');\r\nconst crypto = require('crypto');\r\n\r\nasync function monica(question) {\r\n    try {\r\n        if (!question) throw new Error('Question is required.');\r\n        \r\n        const { data } = await axios.post('https://monica.so/api/search_v1/search', {\r\n            pro: false,\r\n            query: question,\r\n            round: 1,\r\n            session_id: '',\r\n            language: 'auto',\r\n            task_id: crypto.randomUUID()\r\n        }, {\r\n            headers: {\r\n                origin: 'https://monica.so',\r\n                referer: 'https://monica.so/',\r\n                'user-agent': 'Mozilla/5.0 (Linux; Android 15; SM-F958 Build/AP3A.240905.015) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.6723.86 Mobile Safari/537.36'\r\n            }\r\n        });\r\n        \r\n        let result = { text: '', sources: [] };\r\n        const lines = data.split('\\n\\n');\r\n        for (const line of lines) {\r\n            if (line.startsWith('data: {')) {\r\n                const d = JSON.parse(line.substring(6));\r\n                if (d?.text) result.text += d.text;\r\n                if (d?.search_result?.search_web_page_result_list) result.sources = d.search_result.search_web_page_result_list\r\n            }\r\n        }\r\n        \r\n        result.text = result.text.trim();\r\n        return result;\r\n    } catch (error) {\r\n        throw new Error(error.message);\r\n    }\r\n}\r\n\r\n// Usage:\r\nmonica('what is llm?').then(console.log);",
+  "readme": "",
+  "username": "rynn-k",
+  "createdAt": "2026-06-24T19:14:37.636Z",
+  "updatedAt": "2026-06-24T19:14:37.636Z"
+}
